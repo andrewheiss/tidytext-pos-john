@@ -65,7 +65,7 @@ gospels_annotated <- cnlp_annotate(gospels, as_strings = TRUE,
                                    text_var = "text", doc_var = "verse_title")
 ```
 
-The resulting object is a large `annotation`, which is a custom class for **cleanNLP** not not very usable with tidy analysis. We can convert this to a data frame with `cnlp_get_token()`:
+The resulting object is a large `annotation`, which is a custom class for **cleanNLP** that’s not very usable with tidy analysis. We can convert this to a data frame with `cnlp_get_token()`:
 
 ``` r
 gospel_terms <- gospels_annotated %>% 
