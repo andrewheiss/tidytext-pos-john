@@ -1,6 +1,10 @@
 ---
 title: "Tidy text, parts of speech, and unique words in the Bible"
-output: github_document
+output: 
+  github_document:
+    pandoc_args: [ 
+      "--wrap", "none" 
+    ]
 editor_options: 
   chunk_output_type: console
 ---
@@ -9,7 +13,7 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE, fig.retina = 2)
 ```
 
-> See the [actual blog post]().
+> See the [actual blog post](https://www.andrewheiss.com/blog/2018/12/26/tidytext-pos-john/).
 
 ---
 

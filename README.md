@@ -1,48 +1,17 @@
-Tidy text, parts of speech, and unique words in the Bible
-================
 
-> See the [actual blog post]().
+> See the [actual blog post](https://www.andrewheiss.com/blog/2018/12/26/tidytext-pos-john/).
 
 -----
 
-As part of my goal to read some sort of religiously themed book every
-day ([what I’ve read so
-far](https://www.goodreads.com/review/list/2733632-andrew-heiss?shelf=religious)),
-I’ve been reading [Eric Huntsman’s new *Becoming the Beloved
-Disciple*](https://www.amazon.com/Becoming-Beloved-Disciple-Coming-Through/dp/1462136109/),
-a close reading of the Gospel of John from an LDS perspective.
+As part of my goal to read some sort of religiously themed book every day ([what I’ve read so far](https://www.goodreads.com/review/list/2733632-andrew-heiss?shelf=religious)), I’ve been reading [Eric Huntsman’s new *Becoming the Beloved Disciple*](https://www.amazon.com/Becoming-Beloved-Disciple-Coming-Through/dp/1462136109/), a close reading of the Gospel of John from an LDS perspective.
 
-Near the beginning, Huntsman discusses several word frequencies that
-make John unique compared to the [synoptic
-gospels](https://en.wikipedia.org/wiki/Synoptic_Gospels) of Matthew,
-Mark, and Luke (which all [draw on the same Q
-source](https://en.wikipedia.org/wiki/Q_source)). For instance, Huntsman
-states that John focuses more on themes of discipleship (since the word
-“disciple” appears 87 times in John), and on “knowing,” “believing,”
-and “doing,” which appear more often in John than the other gospels.
+Near the beginning, Huntsman discusses several word frequencies that make John unique compared to the [synoptic gospels](https://en.wikipedia.org/wiki/Synoptic_Gospels) of Matthew, Mark, and Luke (which all [draw on the same Q source](https://en.wikipedia.org/wiki/Q_source)). For instance, Huntsman states that John focuses more on themes of discipleship (since the word “disciple” appears 87 times in John), and on “knowing,” “believing,” and “doing,” which appear more often in John than the other gospels.
 
-In the course of [teaching data
-visualization](https://datavizf18.classes.andrewheiss.com/class/11-class/),
-I’ve dabbled in text-based analysis with R, and as a PhD student I wrote
-a couple of [now-dormant
-papers](https://www.andrewheiss.com/research/heiss-rogerson-sources/)
-that used cool digital humanities methods to analyze large corpora of
-text, so my curiosity was piqued. How unique *is* the word “disciple” in
-John compared to the synoptic gospels? What are the most unique verbs in
-John? What words are the most predictive that we’re in John?
+In the course of [teaching data visualization](https://datavizf18.classes.andrewheiss.com/class/11-class/), I’ve dabbled in text-based analysis with R, and as a PhD student I wrote a couple of [now-dormant papers](https://www.andrewheiss.com/research/heiss-rogerson-sources/) that used cool digital humanities methods to analyze large corpora of text, so my curiosity was piqued. How unique *is* the word “disciple” in John compared to the synoptic gospels? What are the most unique verbs in John? What words are the most predictive that we’re in John?
 
 Let’s explore with R\!
 
-As I started writing this post, I also accidentally created an R
-package. The complete LDS scriptures are [available online for free as
-an open source database](http://scriptures.nephi.org/), and I’ve
-downloaded that CSV file so many times for other little mini projects
-I’ve done, so I decided to finally just stick it all in a new package
-so I wouldn’t need to keep downloading the data by hand. [So, behold:
-**scriptuRs**](https://github.com/andrewheiss/scriptuRs). Install it
-with `remotes::install_github("andrewheiss/scriptuRs")` or
-`devtools::install_github("andrewheiss/scriptuRs")`. It’ll be on CRAN
-once they open up for submissions again in January.
+As I started writing this post, I also accidentally created an R package. The complete LDS scriptures are [available online for free as an open source database](http://scriptures.nephi.org/), and I’ve downloaded that CSV file so many times for other little mini projects I’ve done, so I decided to finally just stick it all in a new package so I wouldn’t need to keep downloading the data by hand. [So, behold: **scriptuRs**](https://github.com/andrewheiss/scriptuRs). Install it with `remotes::install_github("andrewheiss/scriptuRs")` or `devtools::install_github("andrewheiss/scriptuRs")`. It’ll be on CRAN once they open up for submissions again in January.
 
 # Load packages and data
 
@@ -61,17 +30,9 @@ gospels <- kjv_bible() %>%
 
 # Part-of-speech tagging
 
-Because I want to know what the most unique/common verbs are in John, we
-need to identify the grammatical purpose of each word. There are
-incredible algorithms for tagging parts of speech, such as [Stanford
-NLP](https://nlp.stanford.edu/) or [spaCy](https://spacy.io/), and the
-[**cleanNLP** package](https://statsmaths.github.io/cleanNLP/) provides
-an easy frontend for working with any of them.
+Because I want to know what the most unique/common verbs are in John, we need to identify the grammatical purpose of each word. There are incredible algorithms for tagging parts of speech, such as [Stanford NLP](https://nlp.stanford.edu/) or [spaCy](https://spacy.io/), and the [**cleanNLP** package](https://statsmaths.github.io/cleanNLP/) provides an easy frontend for working with any of them.
 
-Installing **cleanNLP** is trivial—it’s just a normal R package—but
-connecting it with external NLP algorithms is a little trickier. To
-install spaCy, which is a really fast tagging library, follow these
-steps:
+Installing **cleanNLP** is trivial—it’s just a normal R package—but connecting it with external NLP algorithms is a little trickier. To install spaCy, which is a really fast tagging library, follow these steps:
 
 1.  Make sure Python is installed.
 
@@ -87,8 +48,7 @@ steps:
     python -m spacy download en
     ```
 
-Then, in RStudio, we can point R to the version of Python that has spaCy
-installed and tell **cleanNLP** to use spaCy as the NLP backend:
+Then, in RStudio, we can point R to the version of Python that has spaCy installed and tell **cleanNLP** to use spaCy as the NLP backend:
 
 ``` r
 # Set up NLP backend
@@ -97,8 +57,7 @@ cnlp_init_spacy()  # Use spaCy
 # cnlp_init_udpipe()  # Or use this R-only one without external dependencies
 ```
 
-With all that set up, we can now use `cnlp_annotate()` to do the actual
-tagging:
+With all that set up, we can now use `cnlp_annotate()` to do the actual tagging:
 
 ``` r
 # Determine the parts of speech of the "text" column and use "verse_title" as the id
@@ -106,9 +65,7 @@ gospels_annotated <- cnlp_annotate(gospels, as_strings = TRUE,
                                    text_var = "text", doc_var = "verse_title")
 ```
 
-The resulting object is a large `annotation`, which is a custom class
-for **cleanNLP** not not very usable with tidy analysis. We can convert
-this to a data frame with `cnlp_get_token()`:
+The resulting object is a large `annotation`, which is a custom class for **cleanNLP** not not very usable with tidy analysis. We can convert this to a data frame with `cnlp_get_token()`:
 
 ``` r
 gospel_terms <- gospels_annotated %>% 
@@ -126,22 +83,11 @@ head(gospel_terms)
     ## 5 Matthew 1:1     1     5 generation generation NOUN  NN       16
     ## 6 Matthew 1:1     1     6 of         of         ADP   IN       27
 
-I think this is amazing. There are columns for each word, its lemma (an
-uncapitalized, unconjugated base form of the word), and the part of
-speech. The `upos` column shows the universal part of speech code (like
-`NOUN`, `PROPN` (for proper nouns), `VERB`, etc.), and the `pos` column
-shows a more detailed part of speech code, based on the [Penn Treebank
-codes](https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html)
-(you can get tenses, plurals, types of adverbs, etc.).
+I think this is amazing. There are columns for each word, its lemma (an uncapitalized, unconjugated base form of the word), and the part of speech. The `upos` column shows the universal part of speech code (like `NOUN`, `PROPN` (for proper nouns), `VERB`, etc.), and the `pos` column shows a more detailed part of speech code, based on the [Penn Treebank codes](https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html) (you can get tenses, plurals, types of adverbs, etc.).
 
 # Most unique words
 
-With the parts of speech tagged, we can now figure out what are the most
-unique words in John. To do this, we’ll calculate the term-frequency
-inverse-document-frequency (tf-idf) score for each word. This number is
-ultimately fairly meaningless in isolation, but it generally measures
-how unique a word is in a corpus of documents—it is the product of the
-term frequency and the inverse document frequency:
+With the parts of speech tagged, we can now figure out what are the most unique words in John. To do this, we’ll calculate the term-frequency inverse-document-frequency (tf-idf) score for each word. This number is ultimately fairly meaningless in isolation, but it generally measures how unique a word is in a corpus of documents—it is the product of the term frequency and the inverse document frequency:
 
 \[
 \begin{aligned}
@@ -151,14 +97,7 @@ tf\text{-}idf(\text{term}) &= tf(\text{term}) \times idf(\text{term})
 \end{aligned}
 \]
 
-To calculate this, first we need to specify what document each of these
-words is in. We can kind of get at that now, since the `id` column of
-`gospel_terms` contains the book, chapter name, and verse number for
-each word (i.e. Matthew 1:1), but it’d be nice to have a column called
-`book_title`. We had that column in the original `gospels` data, but we
-lost it after we ran the parts of speech tagging. We’ll create a smaller
-dataset with the chapter, book, and verse information, and then join
-that to our tagged data:
+To calculate this, first we need to specify what document each of these words is in. We can kind of get at that now, since the `id` column of `gospel_terms` contains the book, chapter name, and verse number for each word (i.e. Matthew 1:1), but it’d be nice to have a column called `book_title`. We had that column in the original `gospels` data, but we lost it after we ran the parts of speech tagging. We’ll create a smaller dataset with the chapter, book, and verse information, and then join that to our tagged data:
 
 ``` r
 gospels_lookup <- gospels %>% 
@@ -184,8 +123,7 @@ glimpse(gospel_terms)
     ## $ chapter_number <dbl> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
     ## $ verse_number   <dbl> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
 
-Now, we can use the `bind_tf_idf()` function from **tidytext** to
-calculate the tf-idf for each lemma in each book:
+Now, we can use the `bind_tf_idf()` function from **tidytext** to calculate the tf-idf for each lemma in each book:
 
 ``` r
 # Add the tf-idf for these words
@@ -218,11 +156,7 @@ uniquest_nouns_in_john %>%
 
 <img src="README_files/figure-gfm/unnamed-chunk-4-1.png" width="672" />
 
-The most common nouns are words like “record,” “clay,” and “pool”.
-“Disciple” isn’t in the top 10. Nor does it even have a positive
-number\! It appears 80 times, but it’s the 489th most unique word in
-John (out of 493 words\!), which means it’s not that uncommon compared
-to the other gospels:
+The most common nouns are words like “record,” “clay,” and “pool”. “Disciple” isn’t in the top 10. Nor does it even have a positive number\! It appears 80 times, but it’s the 489th most unique word in John (out of 493 words\!), which means it’s not that uncommon compared to the other gospels:
 
 ``` r
 uniquest_nouns_in_john %>% 
@@ -235,8 +169,7 @@ uniquest_nouns_in_john %>%
     ##   <chr>      <chr>    <chr> <int>     <dbl> <int>
     ## 1 John       disciple NOUN     80 -0.000792   489
 
-In fact, the other gospels all use it fairly frequently too. John does
-indeed use it the most, but just a tiny bit more than Matthew:
+In fact, the other gospels all use it fairly frequently too. John does indeed use it the most, but just a tiny bit more than Matthew:
 
 ``` r
 gospel_tf_idf %>% 
@@ -275,37 +208,15 @@ uniquest_verbs_in_john %>%
 
 <img src="README_files/figure-gfm/unnamed-chunk-7-1.png" width="672" />
 
-Here Huntsman is on to something. He argues that the frequency of the
-word “abide” represents John’s emphasis on bridging the gap between what
-we should *do* and what we should *be*. That is, “to abide” means
-staying with someone, or maintaining an ongoing relationship, but also
-persisting and remaining in a way of life. If John emphasizes
-discipleship, it makes sense that he’d emphasize the need to abide—or
-continue—in discipleship. And indeed, it is the most unique verb in
-John. Neat.
+Here Huntsman is on to something. He argues that the frequency of the word “abide” represents John’s emphasis on bridging the gap between what we should *do* and what we should *be*. That is, “to abide” means staying with someone, or maintaining an ongoing relationship, but also persisting and remaining in a way of life. If John emphasizes discipleship, it makes sense that he’d emphasize the need to abide—or continue—in discipleship. And indeed, it is the most unique verb in John. Neat.
 
 # Most predictive words
 
-Beyond just counting words and calculating tf-idf scores, we can use
-fancier statistical and machine learning techniques to discover which
-words are the most predictive of being from John. If we stumbled on a
-random New Testament verse, what words would tip us off that the verse
-might be from John? If “disciple” isn’t that unique of a word for John,
-what words are?
+Beyond just counting words and calculating tf-idf scores, we can use fancier statistical and machine learning techniques to discover which words are the most predictive of being from John. If we stumbled on a random New Testament verse, what words would tip us off that the verse might be from John? If “disciple” isn’t that unique of a word for John, what words are?
 
-To do this, we’ll adapt a [cool new blog post by Julia
-Silge](https://juliasilge.com/blog/tidy-text-classification/) and use a
-logistic regression model with [LASSO
-regularization](https://en.wikipedia.org/wiki/Lasso_\(statistics\)) to
-categorize John vs. the synoptic gospels. LASSOing gives us a measure of
-variable importance and lets us see which words are most important for
-predicting if text comes from John or not.
+To do this, we’ll adapt a [cool new blog post by Julia Silge](https://juliasilge.com/blog/tidy-text-classification/) and use a logistic regression model with [LASSO regularization](https://en.wikipedia.org/wiki/Lasso_\(statistics\)) to categorize John vs. the synoptic gospels. LASSOing gives us a measure of variable importance and lets us see which words are most important for predicting if text comes from John or not.
 
-Before running the model with
-[**glmnet**’s](https://web.stanford.edu/~hastie/glmnet/glmnet_alpha.html)
-`cv.glmnet()`, we have to restructure our tidy data into a sparse
-matrix. Following Julia’s approach, we’ll also split our data into a
-training set and a test set:
+Before running the model with [**glmnet**’s](https://web.stanford.edu/~hastie/glmnet/glmnet_alpha.html) `cv.glmnet()`, we have to restructure our tidy data into a sparse matrix. Following Julia’s approach, we’ll also split our data into a training set and a test set:
 
 ``` r
 library(rsample)
@@ -336,8 +247,7 @@ dim(sparse_words)
 
 We have 2,835 rows and 2,503 columns to work with. Phew.
 
-We need an outcome variable here, too, or a binary variable indicating
-if the verse is in John or one of the synoptic gospels.
+We need an outcome variable here, too, or a binary variable indicating if the verse is in John or one of the synoptic gospels.
 
 ``` r
 verses_books <- data_frame(verse_title = rownames(sparse_words)) %>% 
@@ -346,8 +256,7 @@ verses_books <- data_frame(verse_title = rownames(sparse_words)) %>%
   mutate(is_john = book_type == "John")
 ```
 
-We can finally run the model now with the `sparse_words` matrix and the
-binary `verses_books$is_john` variable:
+We can finally run the model now with the `sparse_words` matrix and the binary `verses_books$is_john` variable:
 
 ``` r
 library(glmnet)
@@ -360,11 +269,7 @@ model <- cv.glmnet(sparse_words, verses_books$is_john,
 )
 ```
 
-We can then extract the coefficients that have the highest lambda within
-1 standard error of the minimum ([`glmnet` goes through a sequence of
-possible lambda values for each iteration of the
-model](https://stats.stackexchange.com/a/77549/3025)—we want the one
-with the best, or where it’s big, but still close to the minimum)
+We can then extract the coefficients that have the highest lambda within 1 standard error of the minimum ([`glmnet` goes through a sequence of possible lambda values for each iteration of the model](https://stats.stackexchange.com/a/77549/3025)—we want the one with the best, or where it’s big, but still close to the minimum)
 
 ``` r
 library(broom)
@@ -402,11 +307,7 @@ top_coefs %>%
 
 <img src="README_files/figure-gfm/unnamed-chunk-12-1.png" width="672" />
 
-For whatever reason, “changer” is a very John-like word (even though
-[the incident of the money changers at the temple appears in all four
-gospels](https://en.wikipedia.org/wiki/Cleansing_of_the_Temple)), and
-nouns like “hyssop” and “barley” are also very John-like. Meanwhile,
-words like “kingdom” and “harlot” seem to be more Synoptic-like.
+For whatever reason, “changer” is a very John-like word (even though [the incident of the money changers at the temple appears in all four gospels](https://en.wikipedia.org/wiki/Cleansing_of_the_Temple)), and nouns like “hyssop” and “barley” are also very John-like. Meanwhile, words like “kingdom” and “harlot” seem to be more Synoptic-like.
 
 Where do words like “abide” or “disciple” fit in this model?
 
@@ -421,9 +322,6 @@ coefs %>%
     ## 1 disciple    30    0.598 0.00618     0.613
     ## 2 abideth     30    2.11  0.00618     0.613
 
-The coefficient for “disciple” is positive, but not really that
-high—just ≈0.6—so it doesn’t boost the likelihood that we’re in John.
-“Abideth,” though, has a fairly strong effect, just as we found with
-the tf-idf.
+The coefficient for “disciple” is positive, but not really that high—just ≈0.6—so it doesn’t boost the likelihood that we’re in John. “Abideth,” though, has a fairly strong effect, just as we found with the tf-idf.
 
 Neat\!
